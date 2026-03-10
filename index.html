@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Enfermedades Transmitidas por Vectores</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); /* Fondo base celeste */
+        }
+
+        /* Contenedor principal con efecto traslúcido (Glassmorphism) */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.2), 0 10px 10px -5px rgba(249, 115, 22, 0.1); /* Sombra naranja suave */
+        }
+        
+        /* Animación para el fondo de vectores */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(var(--rot)); }
+            50% { transform: translateY(-15px) rotate(calc(var(--rot) + 5deg)); }
+            100% { transform: translateY(0px) rotate(var(--rot)); }
+        }
+        
+        .bug-icon {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative flex flex-col items-center justify-center p-6 text-slate-800">
+
+    <!-- Capa de fondo donde se generarán los zancudos y chinches -->
+    <div id="vector-background" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
+
+    <!-- Contenido Principal -->
+    <main class="relative z-10 w-full max-w-6xl flex flex-col items-center">
+        
+        <!-- Encabezado -->
+        <header class="glass-panel w-full rounded-3xl p-8 md:p-12 mb-10 shadow-xl text-center">
+            <div class="inline-flex items-center justify-center p-4 bg-orange-100 text-orange-600 rounded-full mb-4 shadow-sm">
+                <i data-lucide="shield-alert" class="w-10 h-10"></i>
+            </div>
+            <h1 class="text-3xl md:text-5xl font-bold text-sky-900 mb-4 tracking-tight">
+                Control de Enfermedades <br/>
+                <span class="text-orange-500">Transmitidas por Vectores</span>
+            </h1>
+            <p class="text-sky-700 max-w-2xl mx-auto text-lg">
+                Panel central de acceso a los sistemas de vigilancia epidemiológica y control operativo en campo.
+            </p>
+        </header>
+
+        <!-- Cuadrícula de Enlaces (Dashboard) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+            
+            <!-- Tarjeta 1: Vigilancia Entomovirológica -->
+            <a href="https://mary-9320.github.io/VIGILANCIA_ENTOMOVIROLOGICA/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-center text-center shadow-lg text-decoration-none">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300">
+                    <i data-lucide="microscope" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-sky-900 mb-3 group-hover:text-orange-500 transition-colors">Vigilancia Entomovirológica</h2>
+                <p class="text-sky-700/80 mb-6">
+                    Acceso al sistema de registro y monitoreo de la captura de vectores y aislamiento viral.
+                </p>
+                <div class="mt-auto inline-flex items-center text-orange-500 font-semibold group-hover:text-orange-600">
+                    Ingresar al módulo <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- Tarjeta 2: Programación Control Larvario -->
+            <a href="https://mary-9320.github.io/control_larvariojs6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-center text-center shadow-lg text-decoration-none">
+                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-white flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300">
+                    <i data-lucide="map" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-sky-900 mb-3 group-hover:text-sky-500 transition-colors">Programación Control Larvario</h2>
+                <p class="text-sky-700/80 mb-6">
+                    Herramienta para la gestión, planificación y seguimiento de brigadas de control larvario.
+                </p>
+                <div class="mt-auto inline-flex items-center text-sky-600 font-semibold group-hover:text-sky-700">
+                    Ingresar al módulo <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- Puedes agregar más tarjetas aquí copiando el bloque anterior -->
+
+        </div>
+
+        <footer class="mt-16 text-sky-600/70 text-sm font-medium">
+            &copy; <span id="year"></span> Sistema de Control de Vectores
+        </footer>
+    </main>
+
+    <!-- Script para iconos y fondo de vectores -->
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // --- Generador del fondo de Zancudos y Chinches ---
+        const bgContainer = document.getElementById('vector-background');
+        
+        // SVG personalizado para Zancudo (Mosquito)
+        const zancudoSVG = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Cuerpo -->
+                <line x1="12" y1="4" x2="12" y2="20" stroke-width="2"/>
+                <!-- Pico -->
+                <line x1="12" y1="2" x2="12" y2="4" stroke-width="1"/>
+                <!-- Alas -->
+                <path d="M12 10C8 6 3 8 3 12C3 14 7 12 12 10Z"/>
+                <path d="M12 10C16 6 21 8 21 12C21 14 17 12 12 10Z"/>
+                <!-- Patas -->
+                <path d="M12 14L6 18"/>
+                <path d="M12 14L18 18"/>
+                <path d="M12 8L5 6"/>
+                <path d="M12 8L19 6"/>
+            </svg>
+        `;
+
+        // SVG personalizado para Chinche (Bedbug)
+        const chincheSVG = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Cuerpo (redondo/ovalado) -->
+                <ellipse cx="12" cy="13" rx="7" ry="9" fill="currentColor" fill-opacity="0.2"/>
+                <!-- Cabeza -->
+                <path d="M9 4C9 2.5 10.5 2 12 2C13.5 2 15 2.5 15 4V5H9V4Z"/>
+                <!-- Antenas -->
+                <path d="M10 2L7 0"/>
+                <path d="M14 2L17 0"/>
+                <!-- Patas izquierda -->
+                <path d="M5 10H2"/>
+                <path d="M5 14H2"/>
+                <path d="M6 18L3 20"/>
+                <!-- Patas derecha -->
+                <path d="M19 10H22"/>
+                <path d="M19 14H22"/>
+                <path d="M18 18L21 20"/>
+                <!-- Líneas horizontales del cuerpo -->
+                <line x1="6" y1="10" x2="18" y2="10"/>
+                <line x1="5.5" y1="14" x2="18.5" y2="14"/>
+                <line x1="7" y1="18" x2="17" y2="18"/>
+            </svg>
+        `;
+
+        const vectorTypes = [zancudoSVG, chincheSVG];
+        
+        // Colores en la paleta celeste/naranja para los iconos de fondo
+        const vectorColors = [
+            'text-sky-300', 
+            'text-sky-400', 
+            'text-orange-300', 
+            'text-orange-200'
+        ];
+
+        // Cantidad de vectores en el fondo
+        const numVectors = 35;
+
+        for(let i = 0; i < numVectors; i++) {
+            const vector = document.createElement('div');
+            const isZancudo = Math.random() > 0.4; // 60% zancudos, 40% chinches
+            
+            vector.innerHTML = isZancudo ? zancudoSVG : chincheSVG;
+            
+            // Asignar color y opacidad traslúcida
+            const colorClass = vectorColors[Math.floor(Math.random() * vectorColors.length)];
+            vector.className = `absolute opacity-20 bug-icon ${colorClass}`;
+            
+            // Posicionamiento aleatorio
+            vector.style.left = `${Math.random() * 100}vw`;
+            vector.style.top = `${Math.random() * 100}vh`;
+            
+            // Rotación y tamaño aleatorios
+            const rotation = Math.random() * 360;
+            const scale = Math.random() * 0.8 + 0.6; // Tamaños variados
+            
+            vector.style.setProperty('--rot', `${rotation}deg`);
+            vector.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+            
+            // Tamaño base del contenedor del icono
+            vector.style.width = '48px';
+            vector.style.height = '48px';
+            
+            // Retraso de animación para que no se muevan todos al mismo tiempo
+            vector.style.animationDelay = `${Math.random() * 5}s`;
+
+            bgContainer.appendChild(vector);
+        }
+    </script>
+</body>
+</html>
