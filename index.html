@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Enfermedades Transmitidas por Vectores</title>
+    <title>Centro de Control - Enfermedades Transmitidas por Vectores</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,218 +12,412 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Outfit', sans-serif;
             margin: 0;
             overflow-x: hidden;
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); /* Fondo base celeste */
+            background-color: #020617; /* slate-950 */
+            color: #f8fafc;
         }
 
-        /* Contenedor principal con efecto traslúcido (Glassmorphism) */
+        /* Fondo de cuadrícula estilo radar/mapa */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* Paneles Glassmorphism Oscuro */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(15, 23, 42, 0.45); /* Mucho más traslúcido (antes 0.85) */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.3s ease;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%); /* Traslúcido */
+            backdrop-filter: blur(14px); /* Difuminado para mantener la legibilidad de las letras */
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at top right, var(--glow-color), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.2), 0 10px 10px -5px rgba(249, 115, 22, 0.1); /* Sombra naranja suave */
+            transform: translateY(-5px) scale(1.02);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px -10px var(--shadow-color);
         }
-        
-        /* Animación para el fondo de vectores */
-        @keyframes float {
-            0% { transform: translateY(0px) rotate(var(--rot)); }
-            50% { transform: translateY(-15px) rotate(calc(var(--rot) + 5deg)); }
-            100% { transform: translateY(0px) rotate(var(--rot)); }
+
+        .glass-card:hover::before {
+            opacity: 0.15;
         }
-        
-        .bug-icon {
-            animation: float 6s ease-in-out infinite;
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Animaciones para los insectos del fondo */
+        .bug-wrapper {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.65; /* Aumentado para que no se vean opacos/deslavados */
+            animation: drift 18s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 12px currentColor); /* Resplandor intenso (brillan) */
+        }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(var(--dx), var(--dy)); }
+        }
+
+        .pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .7; transform: scale(1.05); }
         }
     </style>
 </head>
-<body class="min-h-screen relative flex flex-col items-center justify-center p-6 text-slate-800">
+<body class="min-h-screen relative flex flex-col items-center justify-center p-4 sm:p-8">
 
-    <!-- Capa de fondo donde se generarán los zancudos y chinches -->
+    <!-- Fondo Grid + Degradado Radial -->
+    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black z-0 pointer-events-none"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Contenedor donde se generan los vectores -->
     <div id="vector-background" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
 
     <!-- Contenido Principal -->
     <main class="relative z-10 w-full max-w-6xl flex flex-col items-center">
         
         <!-- Encabezado -->
-        <header class="glass-panel w-full rounded-3xl p-8 md:p-12 mb-10 shadow-xl text-center">
-            <div class="inline-flex items-center justify-center p-4 bg-orange-100 text-orange-600 rounded-full mb-4 shadow-sm">
-                <i data-lucide="shield-alert" class="w-10 h-10"></i>
+        <header class="glass-panel w-full max-w-3xl mx-auto rounded-3xl p-6 md:p-8 mb-10 text-center relative overflow-hidden">
+            <!-- Efecto de radar de fondo en el header -->
+            <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 pulse-slow"></div>
+            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-cyan-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 pulse-slow" style="animation-delay: 2s;"></div>
+            
+            <div class="inline-flex items-center justify-center p-4 bg-slate-800/80 border border-slate-700 text-emerald-400 rounded-full mb-6 shadow-lg">
+                <i data-lucide="shield-check" class="w-10 h-10"></i>
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold text-sky-900 mb-4 tracking-tight">
-                Control de Enfermedades <br/>
-                <span class="text-orange-500">Transmitidas por Vectores</span>
+            <h1 class="text-2xl md:text-4xl font-bold text-white mb-2 tracking-tight leading-tight">
+                Programa Control de Enfermedades <br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">
+                    Transmitidas por Vectores
+                </span>
             </h1>
-            <p class="text-sky-700 max-w-2xl mx-auto text-lg">
-                
+            <p class="text-sm md:text-base text-slate-300 font-medium mb-4 uppercase tracking-wider">
+                Jurisdicción Sanitaria No. 6
+            </p>
+            <p class="text-slate-400 max-w-2xl mx-auto text-base font-light">
+                Panel central para el análisis epidemiológico, monitoreo de hotspots y gestión operativa de brigadas en campo.
             </p>
         </header>
 
-        <!-- Cuadrícula de Enlaces (Dashboard) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+        <!-- Cuadrícula de Módulos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full">
             
-            <!-- Tarjeta 1: Vigilancia Entomovirológica -->
-            <a href="https://mary-9320.github.io/VIGILANCIA_ENTOMOVIROLOGICA/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-center text-center shadow-lg text-decoration-none">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-400 to-sky-600 text-white flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="microscope" class="w-10 h-10"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-sky-900 mb-3 group-hover:text-orange-500 transition-colors">Vigilancia Entomovirológica</h2>
-                <p class="text-sky-700/80 mb-6">
-                    Acceso al sistema de registro y monitoreo de la captura de vectores y aislamiento viral.
-                </p>
-                <div class="mt-auto inline-flex items-center text-orange-500 font-semibold group-hover:text-orange-600">
-                    Ingresar al módulo <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
-                </div>
-            </a>
-
-            <!-- Tarjeta 2: Programación Control Larvario -->
-            <a href="https://mary-9320.github.io/control_larvariojs6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-center text-center shadow-lg text-decoration-none">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 text-white flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="map" class="w-10 h-10"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-sky-900 mb-3 group-hover:text-sky-500 transition-colors">Programación Control Larvario</h2>
-                <p class="text-sky-700/80 mb-6">
-                    Herramienta para la gestión, planificación y seguimiento de brigadas de control larvario.
-                </p>
-                <div class="mt-auto inline-flex items-center text-sky-600 font-semibold group-hover:text-sky-700">
-                    Ingresar al módulo <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+            <!-- Tarjeta 1: Ovitrampas -->
+            <a href="https://mary-9320.github.io/ovitrampas_js6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-start shadow-2xl text-decoration-none" style="--glow-color: #06b6d4; --shadow-color: rgba(6, 182, 212, 0.2);">
+                <div class="card-content w-full flex flex-col h-full">
+                    <div class="flex items-center justify-between w-full mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-110 group-hover:bg-cyan-500/10 transition-all duration-300">
+                            <i data-lucide="radar" class="w-8 h-8"></i>
+                        </div>
+                        <span class="px-3 py-1 text-xs font-semibold bg-cyan-500/20 text-cyan-300 rounded-full border border-cyan-500/30 flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span> Hotspots
+                        </span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">Monitoreo de Ovitrampas</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
+                        Visualización interactiva de <b class="text-slate-200">hotspots semanales</b>. Analiza la densidad del vector, mapas de calor y zonas de riesgo para dirigir las acciones de control.
+                    </p>
+                    <div class="mt-auto inline-flex items-center text-cyan-400 font-medium text-sm group-hover:text-cyan-300">
+                        Acceder al mapa <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
                 </div>
             </a>
 
-            <!-- Tarjeta 3: Plan de Eliminación del Paludismo -->
-            <a href="https://mary-9320.github.io/PALUDISMOJS6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-center text-center shadow-lg text-decoration-none">
-                <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-400 to-orange-400 text-white flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    <i data-lucide="target" class="w-10 h-10"></i>
+            <!-- Tarjeta 2: Vigilancia Entomovirológica -->
+            <a href="https://mary-9320.github.io/VIGILANCIA_ENTOMOVIROLOGICA/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-start shadow-2xl text-decoration-none" style="--glow-color: #8b5cf6; --shadow-color: rgba(139, 92, 246, 0.2);">
+                <div class="card-content w-full flex flex-col h-full">
+                    <div class="flex items-center justify-between w-full mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-violet-500/30 text-violet-400 flex items-center justify-center shadow-lg shadow-violet-500/20 group-hover:scale-110 group-hover:bg-violet-500/10 transition-all duration-300">
+                            <i data-lucide="microscope" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-violet-400 transition-colors">Vigilancia Entomovirológica</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
+                        Sistema de registro y monitoreo de la captura de vectores. Clasificación taxonómica y seguimiento de aislamiento viral en laboratorio.
+                    </p>
+                    <div class="mt-auto inline-flex items-center text-violet-400 font-medium text-sm group-hover:text-violet-300">
+                        Ingresar al sistema <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-bold text-sky-900 mb-3 group-hover:text-orange-500 transition-colors">Plan de Eliminación del Paludismo 2025-2030</h2>
-                <p class="text-sky-700/80 mb-6">
-                    Estrategias, seguimiento y evaluación operativa para la erradicación del paludismo.
-                </p>
-                <div class="mt-auto inline-flex items-center text-orange-600 font-semibold group-hover:text-orange-700">
-                    Ingresar al plan <i data-lucide="arrow-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+
+            <!-- Tarjeta 3: Programación Control Larvario -->
+            <a href="https://mary-9320.github.io/control_larvariojs6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-start shadow-2xl text-decoration-none" style="--glow-color: #f59e0b; --shadow-color: rgba(245, 158, 11, 0.2);">
+                <div class="card-content w-full flex flex-col h-full">
+                    <div class="flex items-center justify-between w-full mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-amber-500/30 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/20 group-hover:scale-110 group-hover:bg-amber-500/10 transition-all duration-300">
+                            <i data-lucide="map" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">Programación Control Larvario</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
+                        Herramienta logística para la gestión, planificación de rutas y seguimiento operativo de las brigadas de control larvario en campo.
+                    </p>
+                    <div class="mt-auto inline-flex items-center text-amber-400 font-medium text-sm group-hover:text-amber-300">
+                        Planificar rutas <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Tarjeta 4: Plan Paludismo -->
+            <a href="https://mary-9320.github.io/PALUDISMOJS6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-start shadow-2xl text-decoration-none" style="--glow-color: #10b981; --shadow-color: rgba(16, 185, 129, 0.2);">
+                <div class="card-content w-full flex flex-col h-full">
+                    <div class="flex items-center justify-between w-full mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 group-hover:scale-110 group-hover:bg-emerald-500/10 transition-all duration-300">
+                            <i data-lucide="target" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors">Eliminación del Paludismo</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
+                        Indicadores, estrategias, seguimiento y evaluación operativa del Plan Nacional para la Erradicación del Paludismo 2025-2030.
+                    </p>
+                    <div class="mt-auto inline-flex items-center text-emerald-400 font-medium text-sm group-hover:text-emerald-300">
+                        Ver indicadores <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
                 </div>
             </a>
 
         </div>
 
-        <footer class="mt-16 text-sky-600/70 text-sm font-medium">
-            &copy; <span id="year"></span> Sistema de Control de Vectores
+        <footer class="mt-16 mb-6 text-slate-500 text-sm font-medium tracking-wide">
+            &copy; <span id="year"></span>
         </footer>
     </main>
 
-    <!-- Script para iconos y fondo de vectores -->
+    <!-- Scripts -->
     <script>
-        // Inicializar iconos de Lucide
+        // Inicializar iconos
         lucide.createIcons();
         document.getElementById('year').textContent = new Date().getFullYear();
 
-        // --- Generador del fondo de Zancudos y Chinches ---
+        // ==========================================
+        // GENERADOR DE VECTORES REALISTAS 
+        // ==========================================
         const bgContainer = document.getElementById('vector-background');
         
-        // SVG personalizado para Zancudo (Mosquito)
+        // 1. Zancudo Realista (Aedes / Anopheles)
         const zancudoSVG = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                <!-- Cuerpo -->
-                <line x1="12" y1="4" x2="12" y2="20" stroke-width="2"/>
-                <!-- Pico -->
-                <line x1="12" y1="2" x2="12" y2="4" stroke-width="1"/>
-                <!-- Alas -->
-                <path d="M12 10C8 6 3 8 3 12C3 14 7 12 12 10Z"/>
-                <path d="M12 10C16 6 21 8 21 12C21 14 17 12 12 10Z"/>
-                <!-- Patas -->
-                <path d="M12 14L6 18"/>
-                <path d="M12 14L18 18"/>
-                <path d="M12 8L5 6"/>
-                <path d="M12 8L19 6"/>
-            </svg>
-        `;
-
-        // SVG personalizado para Chinche (Bedbug)
-        const chincheSVG = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
-                <!-- Cuerpo (redondo/ovalado) -->
-                <ellipse cx="12" cy="13" rx="7" ry="9" fill="currentColor" fill-opacity="0.2"/>
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Patas traseras -->
+                <path d="M47 42 L25 55 L15 85" stroke-width="1.5" />
+                <path d="M53 42 L75 55 L85 85" stroke-width="1.5" />
+                <!-- Patas medias -->
+                <path d="M46 38 L15 35 L5 55" stroke-width="1.5" />
+                <path d="M54 38 L85 35 L95 55" stroke-width="1.5" />
+                <!-- Patas delanteras -->
+                <path d="M47 32 L25 15 L10 25" stroke-width="1.5" />
+                <path d="M53 32 L75 15 L90 25" stroke-width="1.5" />
+                <!-- Alas (Translúcidas) -->
+                <path d="M48 35 C20 10 10 40 46 48 Z" fill="currentColor" fill-opacity="0.25" stroke-width="1" />
+                <path d="M52 35 C80 10 90 40 54 48 Z" fill="currentColor" fill-opacity="0.25" stroke-width="1" />
+                <!-- Abdomen -->
+                <path d="M45 45 C40 60 45 85 50 90 C55 85 60 60 55 45 Z" fill="currentColor" fill-opacity="0.9" />
+                <!-- Rayas del abdomen -->
+                <path d="M43 55 L57 55 M44 65 L56 65 M46 75 L54 75 M48 85 L52 85" stroke-width="1.5" stroke="#020617" opacity="0.6"/>
+                <!-- Torax -->
+                <ellipse cx="50" cy="35" rx="7" ry="10" fill="currentColor" />
                 <!-- Cabeza -->
-                <path d="M9 4C9 2.5 10.5 2 12 2C13.5 2 15 2.5 15 4V5H9V4Z"/>
+                <circle cx="50" cy="22" r="3.5" fill="currentColor" />
+                <!-- Proboscide -->
+                <path d="M50 18 L50 2" stroke-width="1.5" />
                 <!-- Antenas -->
-                <path d="M10 2L7 0"/>
-                <path d="M14 2L17 0"/>
-                <!-- Patas izquierda -->
-                <path d="M5 10H2"/>
-                <path d="M5 14H2"/>
-                <path d="M6 18L3 20"/>
-                <!-- Patas derecha -->
-                <path d="M19 10H22"/>
-                <path d="M19 14H22"/>
-                <path d="M18 18L21 20"/>
-                <!-- Líneas horizontales del cuerpo -->
-                <line x1="6" y1="10" x2="18" y2="10"/>
-                <line x1="5.5" y1="14" x2="18.5" y2="14"/>
-                <line x1="7" y1="18" x2="17" y2="18"/>
+                <path d="M48 20 Q35 15 30 25" stroke-width="0.8" stroke-dasharray="2 2"/>
+                <path d="M52 20 Q65 15 70 25" stroke-width="0.8" stroke-dasharray="2 2"/>
             </svg>
         `;
 
-        const vectorTypes = [zancudoSVG, chincheSVG];
-        
-        // Colores en la paleta celeste/naranja para los iconos de fondo
-        const vectorColors = [
-            'text-sky-300', 
-            'text-sky-400', 
-            'text-orange-300', 
-            'text-orange-200'
+        // 2. Chinche Realista (Triatomino / Chagas)
+        const chincheSVG = `
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Patas traseras -->
+                <path d="M40 55 L20 65 L15 85" stroke-width="2" />
+                <path d="M60 55 L80 65 L85 85" stroke-width="2" />
+                <!-- Patas medias -->
+                <path d="M38 45 L15 45 L10 60" stroke-width="2" />
+                <path d="M62 45 L85 45 L90 60" stroke-width="2" />
+                <!-- Patas delanteras -->
+                <path d="M40 35 L20 25 L15 10" stroke-width="2" />
+                <path d="M60 35 L80 25 L85 10" stroke-width="2" />
+                <!-- Abdomen (Escudo ancho) -->
+                <path d="M50 95 C20 85 25 45 40 35 L60 35 C75 45 80 85 50 95 Z" fill="currentColor" fill-opacity="0.95" />
+                <!-- Detalles del borde (Segmentos característicos) -->
+                <path d="M30 50 L35 52 M28 60 L33 62 M28 70 L34 70 M33 80 L38 78" stroke-width="2.5" stroke="#020617" opacity="0.8"/>
+                <path d="M70 50 L65 52 M72 60 L67 62 M72 70 L66 70 M67 80 L62 78" stroke-width="2.5" stroke="#020617" opacity="0.8"/>
+                <!-- Línea central de las alas plegadas -->
+                <path d="M50 45 L50 85" stroke-width="2" stroke="#020617" opacity="0.6"/>
+                <!-- Torax (Pronoto) -->
+                <path d="M42 35 L58 35 L55 20 L45 20 Z" fill="currentColor" />
+                <!-- Cabeza (Alargada triangular) -->
+                <path d="M46 20 L54 20 L52 5 L48 5 Z" fill="currentColor" />
+                <!-- Antenas -->
+                <path d="M48 12 L30 5" stroke-width="1.5" />
+                <path d="M52 12 L70 5" stroke-width="1.5" />
+            </svg>
+        `;
+
+        // 3. Araña Realista
+        const aranaSVG = `
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Patas L1-L4 -->
+                <path d="M42 35 L20 15 L5 25" stroke-width="2.5" />
+                <path d="M40 40 L15 35 L5 50" stroke-width="2.5" />
+                <path d="M40 45 L15 55 L10 75" stroke-width="2.5" />
+                <path d="M43 48 L25 80 L15 95" stroke-width="2.5" />
+                <!-- Patas R1-R4 -->
+                <path d="M58 35 L80 15 L95 25" stroke-width="2.5" />
+                <path d="M60 40 L85 35 L95 50" stroke-width="2.5" />
+                <path d="M60 45 L85 55 L90 75" stroke-width="2.5" />
+                <path d="M57 48 L75 80 L85 95" stroke-width="2.5" />
+                <!-- Abdomen grande -->
+                <ellipse cx="50" cy="65" rx="16" ry="22" fill="currentColor" fill-opacity="0.95"/>
+                <!-- Marcas en abdomen -->
+                <path d="M50 50 L50 80" stroke-width="3" stroke="#020617" opacity="0.5" stroke-dasharray="4 6"/>
+                <!-- Cefalotorax -->
+                <circle cx="50" cy="38" r="9" fill="currentColor" />
+                <!-- Pedipalpos (Cerca de la boca) -->
+                <path d="M46 30 L42 18 L44 12" stroke-width="2.5" />
+                <path d="M54 30 L58 18 L56 12" stroke-width="2.5" />
+            </svg>
+        `;
+
+        // 4. Alacrán Realista
+        const alacranSVG = `
+            <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                <!-- Patas L1-L4 -->
+                <path d="M38 35 L20 30 L10 40" stroke-width="1.5" />
+                <path d="M36 42 L15 45 L10 55" stroke-width="1.5" />
+                <path d="M36 49 L18 55 L15 65" stroke-width="1.5" />
+                <path d="M39 56 L22 68 L20 80" stroke-width="1.5" />
+                <!-- Patas R1-R4 -->
+                <path d="M62 35 L80 30 L90 40" stroke-width="1.5" />
+                <path d="M64 42 L85 45 L90 55" stroke-width="1.5" />
+                <path d="M64 49 L82 55 L85 65" stroke-width="1.5" />
+                <path d="M61 56 L78 68 L80 80" stroke-width="1.5" />
+                
+                <!-- Pinza Izquierda -->
+                <path d="M40 25 L25 15 L15 25" stroke-width="3" />
+                <path d="M5 25 C5 15 20 10 20 20 L15 35 Z" fill="currentColor" fill-opacity="0.9"/>
+                <path d="M18 20 C25 20 25 30 18 32 Z" fill="currentColor" /> <!-- Dedo interior -->
+
+                <!-- Pinza Derecha -->
+                <path d="M60 25 L75 15 L85 25" stroke-width="3" />
+                <path d="M95 25 C95 15 80 10 80 20 L85 35 Z" fill="currentColor" fill-opacity="0.9"/>
+                <path d="M82 20 C75 20 75 30 82 32 Z" fill="currentColor" /> <!-- Dedo interior -->
+
+                <!-- Cuerpo (Mesosoma segmentado) -->
+                <path d="M42 25 L58 25 L62 35 L64 55 C64 65 58 70 50 70 C42 70 36 65 36 55 L38 35 Z" fill="currentColor" fill-opacity="0.95"/>
+                <path d="M38 35 L62 35 M37 42 L63 42 M36 49 L64 49 M36 56 L64 56 M39 63 L61 63" stroke-width="2" stroke="#020617" opacity="0.6"/>
+
+                <!-- Cola curvada (Metasoma y Aguijón) -->
+                <path d="M50 70 L55 80 L45 88 L35 85 L28 75" stroke-width="6" stroke-linejoin="miter" fill="none"/>
+                <!-- Cortes de la cola -->
+                <path d="M48 76 L58 74 M43 83 L50 89 M34 81 L38 88" stroke-width="1.5" stroke="#020617"/>
+                <!-- Telson (Aguijón final) -->
+                <path d="M28 75 C20 70 20 60 25 55 L32 65 Z" fill="currentColor" />
+                <path d="M25 55 L20 48" stroke-width="2" />
+            </svg>
+        `;
+
+        const vectors = [
+            { svg: zancudoSVG, weight: 4 }, 
+            { svg: chincheSVG, weight: 2 },
+            { svg: aranaSVG, weight: 1.5 },
+            { svg: alacranSVG, weight: 1.5 }
         ];
 
-        // Cantidad de vectores en el fondo
-        const numVectors = 35;
+        // Colores Neón Biológicos
+        const vectorColors = [
+            'text-emerald-400', 
+            'text-cyan-400', 
+            'text-teal-400', 
+            'text-green-400',
+            'text-amber-500'
+        ];
+
+        // Se reduce drásticamente la cantidad para que estén "separados" y se aprecien los detalles
+        const numVectors = 20;
+
+        function getRandomVector() {
+            const totalWeight = vectors.reduce((acc, v) => acc + v.weight, 0);
+            let random = Math.random() * totalWeight;
+            for (let v of vectors) {
+                if (random < v.weight) return v.svg;
+                random -= v.weight;
+            }
+            return vectors[0].svg;
+        }
 
         for(let i = 0; i < numVectors; i++) {
-            const vector = document.createElement('div');
-            const isZancudo = Math.random() > 0.4; // 60% zancudos, 40% chinches
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bug-wrapper';
             
-            vector.innerHTML = isZancudo ? zancudoSVG : chincheSVG;
+            // Posicionamiento más esparcido
+            wrapper.style.left = `${Math.random() * 90 + 5}vw`;
+            wrapper.style.top = `${Math.random() * 90 + 5}vh`;
             
-            // Asignar color y opacidad traslúcida
-            const colorClass = vectorColors[Math.floor(Math.random() * vectorColors.length)];
-            vector.className = `absolute opacity-20 bug-icon ${colorClass}`;
+            const dirX = (Math.random() * 160 - 80) + 'px';
+            const dirY = (Math.random() * 160 - 80) + 'px';
+            wrapper.style.setProperty('--dx', dirX);
+            wrapper.style.setProperty('--dy', dirY);
             
-            // Posicionamiento aleatorio
-            vector.style.left = `${Math.random() * 100}vw`;
-            vector.style.top = `${Math.random() * 100}vh`;
-            
-            // Rotación y tamaño aleatorios
-            const rotation = Math.random() * 360;
-            const scale = Math.random() * 0.8 + 0.6; // Tamaños variados
-            
-            vector.style.setProperty('--rot', `${rotation}deg`);
-            vector.style.transform = `rotate(${rotation}deg) scale(${scale})`;
-            
-            // Tamaño base del contenedor del icono
-            vector.style.width = '48px';
-            vector.style.height = '48px';
-            
-            // Retraso de animación para que no se muevan todos al mismo tiempo
-            vector.style.animationDelay = `${Math.random() * 5}s`;
+            wrapper.style.animationDelay = `-${Math.random() * 15}s`;
+            wrapper.style.animationDuration = `${12 + Math.random() * 10}s`;
 
-            bgContainer.appendChild(vector);
+            const iconElement = document.createElement('div');
+            iconElement.innerHTML = getRandomVector();
+            
+            const colorClass = vectorColors[Math.floor(Math.random() * vectorColors.length)];
+            iconElement.className = `${colorClass}`;
+            
+            const rotation = Math.random() * 360;
+            const scale = Math.random() * 1.5 + 1.0; // Tamaños moderados a grandes para lucir el detalle
+            iconElement.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+            iconElement.style.width = '70px';
+            iconElement.style.height = '70px';
+
+            wrapper.appendChild(iconElement);
+            bgContainer.appendChild(wrapper);
         }
     </script>
 </body>
