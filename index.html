@@ -12,12 +12,8 @@
     <!-- ========================================== -->
     <!-- 2. ÍCONO DEL NAVEGADOR (FAVICON) -->
     <!-- ========================================== -->
-    <!-- Opción Rápida (Emoji de zancudo): -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦟</text></svg>">
     
-    <!-- Opción si subes tu propia imagen a GitHub (Borra la de arriba y usa esta): -->
-    <!-- <link rel="icon" type="image/png" href="favicon.png"> -->
-
     <!-- ========================================== -->
     <!-- 3. META TAGS PARA COMPARTIR LINKS (VISTA PREVIA) -->
     <!-- ========================================== -->
@@ -25,8 +21,6 @@
     <meta property="og:description" content="Panel central los componentes del programa de vectores.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mary-9320.github.io/VECTORES_J6/">
-    <!-- Si tienes una imagen para mostrar al compartir, súbela a tu github y pon el link aquí abajo: -->
-    <!-- <meta property="og:image" content="https://mary-9320.github.io/VECTORES_J6/imagen-portada.jpg"> -->
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -61,7 +55,7 @@
 
         /* Paneles Glassmorphism Oscuro */
         .glass-panel {
-            background: rgba(15, 23, 42, 0.45); /* Mucho más traslúcido (antes 0.85) */
+            background: rgba(15, 23, 42, 0.45);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -69,8 +63,8 @@
         }
 
         .glass-card {
-            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%); /* Traslúcido */
-            backdrop-filter: blur(14px); /* Difuminado para mantener la legibilidad de las letras */
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+            backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -108,9 +102,9 @@
         .bug-wrapper {
             position: absolute;
             pointer-events: none;
-            opacity: 0.65; /* Aumentado para que no se vean opacos/deslavados */
+            opacity: 0.65;
             animation: drift 18s infinite alternate ease-in-out;
-            filter: drop-shadow(0 0 12px currentColor); /* Resplandor intenso (brillan) */
+            filter: drop-shadow(0 0 12px currentColor);
         }
 
         @keyframes drift {
@@ -142,7 +136,6 @@
         
         <!-- Encabezado -->
         <header class="glass-panel w-full max-w-3xl mx-auto rounded-3xl p-6 md:p-8 mb-10 text-center relative overflow-hidden">
-            <!-- Efecto de radar de fondo en el header -->
             <div class="absolute -top-24 -right-24 w-64 h-64 bg-emerald-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 pulse-slow"></div>
             <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-cyan-500 rounded-full mix-blend-screen filter blur-[100px] opacity-20 pulse-slow" style="animation-delay: 2s;"></div>
             
@@ -237,6 +230,24 @@
                     </p>
                     <div class="mt-auto inline-flex items-center text-emerald-400 font-medium text-sm group-hover:text-emerald-300">
                         Ver indicadores <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Tarjeta 5: Vigilancia Entomológica NUEVA -->
+            <a href="https://mary-9320.github.io/ENTOMOLOGIA_PALUDISMOJS6/" target="_blank" class="glass-card group rounded-3xl p-8 flex flex-col items-start shadow-2xl text-decoration-none" style="--glow-color: #3b82f6; --shadow-color: rgba(59, 130, 246, 0.2);">
+                <div class="card-content w-full flex flex-col h-full">
+                    <div class="flex items-center justify-between w-full mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800 border border-blue-500/30 text-blue-400 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 group-hover:bg-blue-500/10 transition-all duration-300">
+                            <i data-lucide="bug" class="w-8 h-8"></i>
+                        </div>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">Vigilancia Entomológica</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6 flex-grow">
+                        Monitoreo y análisis de poblaciones de vectores transmisores del paludismo para dirigir acciones preventivas y de control eficaces.
+                    </p>
+                    <div class="mt-auto inline-flex items-center text-blue-400 font-medium text-sm group-hover:text-blue-300">
+                        Acceder al módulo <i data-lucide="arrow-up-right" class="w-4 h-4 ml-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"></i>
                     </div>
                 </div>
             </a>
